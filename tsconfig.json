@@ -3,11 +3,30 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "screens": ["./src/screens"],
-      "screens/*": ["./src/screens/*"],
-      "api": ["./src/api"],
-      "api/*": ["./src/api/*"]
+      "screens": [
+        "./src/screens"
+      ],
+      "screens/*": [
+        "./src/screens/*"
+      ],
+      "api": [
+        "./src/api"
+      ],
+      "api/*": [
+        "./src/api/*"
+      ],
+      "components": [
+        "./src/components"
+      ],
+      "components/*": [
+        "./src/components/*"
+      ]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ]
 }

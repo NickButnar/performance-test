@@ -1,4 +1,4 @@
 export { FlashListScreen } from "./FlashListScreen";
 export { FlatListScreen } from "./FlatListScreen";
-export { FInalFormScreen } from "./FInalFormScreen";
+export { FinalFormScreen } from "./FinalFormScreen";
 export { HookFormScreen } from "./HookFormScreen";

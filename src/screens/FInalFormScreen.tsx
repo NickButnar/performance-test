@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet } from 'react-native'
 
 
-export const FInalFormScreen = () => {
+export const FinalFormScreen = () => {
   return (
     <View style={styles.container}>
-      <Text>FInalFormScreen</Text>
+      <Text>FinalFormScreen</Text>
     </View>
   )
 }

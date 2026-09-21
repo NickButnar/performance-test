@@ -1,1 +1,1 @@
-export { FlatListScreen as default } from "../../screens";
+export { FlatListScreen as default } from "screens";
