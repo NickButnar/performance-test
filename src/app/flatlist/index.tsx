@@ -1,0 +1,1 @@
+export { FlatListScreen as default } from "../../screens";

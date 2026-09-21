@@ -1,4 +1,22 @@
 {
-  "name": "performance-test",
-  "slug": "performance-test"
+  "expo": {
+    "name": "performance-test",
+    "slug": "performance-test",
+    "version": "1.0.0",
+    "scheme": "performancetest",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "experiments": {
+      "typedRoutes": true
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.nick-butnar.performancetest"
+    },
+    "android": {
+      "package": "com.nick_butnar.performancetest"
+    }
+  }
 }
