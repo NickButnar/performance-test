@@ -1,8 +1,8 @@
 import React from 'react'
 import { View, Text, StyleSheet, Button } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { useForm, useController, SubmitHandler, type Control } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, useField, useForm } from 'react-final-form';
+import { setIn } from 'final-form';
 import { TextInput } from 'components/TextInput';
 import { fields, formSchema, initialValues, type FormData } from 'forms';
 import {
@@ -16,20 +16,33 @@ import {
 } from 'benchmark';
 
 type FieldProps = {
-  control: Control<FormData>;
   name: keyof FormData;
   placeholder: string;
 };
 
-const zodValidate = zodResolver(formSchema, undefined, { mode: 'sync' });
+const validate = (values: FormData) => {
+  count('schema');
 
-const Field = ({ control, name, placeholder }: FieldProps) => {
+  const result = formSchema.safeParse(values);
+  if (result.success) {
+    return undefined;
+  }
+
+  return result.error.issues.reduce(
+    (errors, issue) => setIn(errors, issue.path.join('.'), issue.message),
+    {} as object,
+  );
+};
+
+const Field = ({ name, placeholder }: FieldProps) => {
   count(`field:${name}`);
 
   const {
-    field: { onChange, onBlur, value },
-    fieldState: { error },
-  } = useController({ control, name });
+    input: { onChange, onBlur, value },
+    meta: { error, modified, submitFailed },
+  } = useField(name, {
+    subscription: { value: true, error: true, modified: true, submitFailed: true },
+  });
 
   const latestOnChange = React.useRef(onChange);
 
@@ -45,36 +58,22 @@ const Field = ({ control, name, placeholder }: FieldProps) => {
 
   return (
     <View style={styles.formGroup}>
-      <TextInput onBlur={onBlur} onChangeText={onChange} value={String(value)} placeholder={placeholder} />
+      <TextInput onBlur={() => onBlur()} onChangeText={onChange} value={String(value)} placeholder={placeholder} />
       <Text style={styles.error} numberOfLines={1}>
-        {error?.message ?? ' '}
+        {((modified || submitFailed) && error) || ' '}
       </Text>
     </View>
   );
 };
 
-export const HookFormScreen = () => {
-  React.useState(() => reset('react-hook-form'));
-
+const FormBody = ({ handleSubmit }: { handleSubmit: () => void }) => {
   count('root');
 
-  const { control, handleSubmit, reset: resetForm } = useForm<FormData>({
-    mode: 'onChange',
-    defaultValues: initialValues,
-    resolver: (values, context, options) => {
-      count('schema');
-
-      return zodValidate(values, context, options);
-    },
-  })
-
-  const onSubmit: SubmitHandler<FormData> = () => {};
-
-  const submit = handleSubmit(onSubmit);
+  const form = useForm();
 
   React.useEffect(() => {
-    registerSubmit(submit);
-    registerRestart(() => resetForm(initialValues));
+    registerSubmit(handleSubmit);
+    registerRestart(() => form.restart(initialValues));
   });
 
   return (
@@ -86,14 +85,30 @@ export const HookFormScreen = () => {
     >
       <View style={styles.form}>
         {fields.map(({ name, placeholder }) => (
-          <Field key={name} control={control} name={name} placeholder={placeholder} />
+          <Field key={name} name={name} placeholder={placeholder} />
         ))}
 
-        <Button title="Submit" onPress={submit} />
+        <Button title="Submit" onPress={handleSubmit} />
       </View>
 
       <BenchPanel />
     </KeyboardAwareScrollView>
+  );
+};
+
+const onSubmit = () => {};
+
+export const FinalFormScreen = () => {
+  React.useState(() => reset('react-final-form'));
+
+  return (
+    <Form<FormData>
+      onSubmit={onSubmit}
+      initialValues={initialValues}
+      validate={validate}
+      subscription={{}}
+      render={({ handleSubmit }) => <FormBody handleSubmit={handleSubmit} />}
+    />
   )
 }
 
@@ -102,7 +117,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    flexGrow: 1, 
+    flexGrow: 1,
     alignItems: "center", 
     justifyContent: "center", 
     paddingHorizontal: 16,
