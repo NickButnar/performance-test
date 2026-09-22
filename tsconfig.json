@@ -9,6 +9,18 @@
       "screens/*": [
         "./src/screens/*"
       ],
+      "benchmark": [
+        "./src/benchmark"
+      ],
+      "benchmark/*": [
+        "./src/benchmark/*"
+      ],
+      "forms": [
+        "./src/forms"
+      ],
+      "forms/*": [
+        "./src/forms/*"
+      ],
       "api": [
         "./src/api"
       ],
